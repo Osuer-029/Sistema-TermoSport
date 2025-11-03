@@ -1,5 +1,21 @@
-import { auth } from "../firebaseConfig.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+// inicio.js - Configuración de Firebase integrada
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+// ====== CONFIGURACIÓN FIREBASE ======
+const firebaseConfig = {
+  apiKey: "AIzaSyCKnLV__97cSphEtqg0awLYgmKxoziolM8",
+  authDomain: "sistema-alberto-2-e27ef.firebaseapp.com",
+  projectId: "sistema-alberto-2-e27ef",
+  storageBucket: "sistema-alberto-2-e27ef.firebasestorage.app",
+  messagingSenderId: "915120884721",
+  appId: "1:915120884721:web:3d311447a04b881ad45250",
+  measurementId: "G-CGKSVF3ZXJ"
+};
+
+// ====== Inicialización ======
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 // ====== Elementos del DOM ======
 const logoutBtn = document.getElementById("logoutBtn");

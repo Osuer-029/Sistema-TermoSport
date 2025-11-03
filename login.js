@@ -12,7 +12,7 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-/* ========= FIREBASE CONFIG - reemplaza si hace falta ========= */
+/* ========= FIREBASE CONFIG ========= */
 const firebaseConfig = {
   apiKey: "AIzaSyCKnLV__97cSphEtqg0awLYgmKxoziolM8",
   authDomain: "sistema-alberto-2-e27ef.firebaseapp.com",
@@ -44,48 +44,45 @@ const registerEmail = document.getElementById("registerEmail");
 const registerPassword = document.getElementById("registerPassword");
 
 /* ========= Helpers ========= */
-function showForm(which){
+function showForm(which) {
   document.querySelectorAll(".form").forEach(f => f.classList.remove("active"));
   document.getElementById(which).classList.add("active");
-  // reset token group visibility
-  tokenGroup.classList.add("hidden");
+  tokenGroup.classList.add("hidden"); // reset token visibility
 }
 
-function isTokenVerifiedLocal(){
+function isTokenVerifiedLocal() {
   return localStorage.getItem("tokenVerified") === "true";
 }
 
-/* ===== show/hide forms with animation ===== */
-goRegister.addEventListener("click", (e)=>{
+/* ===== Show/Hide Forms ===== */
+goRegister.addEventListener("click", (e) => {
   e.preventDefault();
   showForm("registerForm");
 });
-goLogin.addEventListener("click", (e)=>{
+goLogin.addEventListener("click", (e) => {
   e.preventDefault();
   showForm("loginForm");
 });
 
-/* paste token from clipboard (con permiso del navegador) */
-pasteBtn?.addEventListener("click", async ()=>{
+/* ===== Paste token from clipboard ===== */
+pasteBtn?.addEventListener("click", async () => {
   try {
     const txt = await navigator.clipboard.readText();
     if (txt) loginToken.value = txt.trim();
   } catch (err) {
-    // no clipboard access
     alert("No se pudo leer el portapapeles. Pega manualmente el token.");
   }
 });
 
-/* If user already authenticated, go to inicio */
-onAuthStateChanged(auth, (user)=>{
+/* ===== Verificar sesión activa ===== */
+onAuthStateChanged(auth, (user) => {
   if (user) {
-    // already signed in -> go to app
     window.location.href = "inicio.html";
   }
 });
 
-/* ===== Token fetcher - reads token from Firestore config */
-async function fetchTokenFromConfig(){
+/* ===== Token fetcher - Firestore ===== */
+async function fetchTokenFromConfig() {
   try {
     const docRef = doc(db, "configuracion", "datos");
     const snap = await getDoc(docRef);
@@ -99,16 +96,15 @@ async function fetchTokenFromConfig(){
   }
 }
 
-/* ===== REGISTER - no token required ===== */
-registerForm.addEventListener("submit", async (e)=>{
+/* ===== REGISTER - No token required ===== */
+registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = registerEmail.value.trim();
   const pwd = registerPassword.value.trim();
-  if(!email || !pwd){ alert("Completa todos los campos."); return; }
+  if (!email || !pwd) return alert("Completa todos los campos.");
 
   try {
     await createUserWithEmailAndPassword(auth, email, pwd);
-    // mark this browser as verified so user won't be asked token hereafter
     localStorage.setItem("tokenVerified", "true");
     alert("Registro correcto. Bienvenido.");
     window.location.href = "inicio.html";
@@ -118,55 +114,54 @@ registerForm.addEventListener("submit", async (e)=>{
   }
 });
 
-/* ===== LOGIN - token only if required for this browser ===== */
-loginForm.addEventListener("submit", async (e)=>{
+/* ===== LOGIN - Token inteligente ===== */
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = loginEmail.value.trim();
   const pwd = loginPassword.value.trim();
 
-  if(!email || !pwd){ alert("Completa todos los campos."); return; }
+  if (!email || !pwd) return alert("Completa todos los campos.");
 
   try {
-    // If local token verified, sign in directly
-    if (isTokenVerifiedLocal()){
+    // Si navegador ya verificado
+    if (isTokenVerifiedLocal()) {
       await signInWithEmailAndPassword(auth, email, pwd);
       window.location.href = "inicio.html";
       return;
     }
 
-    // Not verified locally -> check if system has a token configured
+    // Traer token desde Firestore
     const tokenValido = await fetchTokenFromConfig();
 
-    if (!tokenValido){
-      // No token configured in system -> allow sign in and mark local as verified
+    if (!tokenValido) {
+      // No hay token configurado, permitir login
       await signInWithEmailAndPassword(auth, email, pwd);
       localStorage.setItem("tokenVerified", "true");
       window.location.href = "inicio.html";
       return;
     }
 
-    // Token exists in config -> show token field if hidden
+    // Token existe -> mostrar sección de token
     tokenGroup.classList.remove("hidden");
+
     const tokenIngresado = loginToken.value.trim().toUpperCase();
-    if (!tokenIngresado){
-      // token required but not provided
+    if (!tokenIngresado) {
       alert("Debes introducir el token de seguridad para este navegador.");
       return;
     }
 
-    if (tokenIngresado !== tokenValido){
+    if (tokenIngresado !== tokenValido) {
       alert("Token incorrecto. Acceso denegado.");
       return;
     }
 
-    // token ok -> mark browser and sign in
+    // Token correcto -> marcar navegador y login
     localStorage.setItem("tokenVerified", "true");
     await signInWithEmailAndPassword(auth, email, pwd);
     window.location.href = "inicio.html";
 
   } catch (err) {
     console.error("Login error:", err);
-    // If Firebase authentication error show friendly message
     if (err.code && err.code.startsWith("auth/")) {
       alert("Error de autenticación: " + err.message);
     } else {

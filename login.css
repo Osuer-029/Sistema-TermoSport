@@ -4,7 +4,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 :root {
-  --primary: #0078ff;
+  --primary: #a6c7ec;
   --secondary: #00c6ff;
   --background: linear-gradient(135deg, var(--primary), var(--secondary));
   --card-bg: rgba(255, 255, 255, 0.9);
