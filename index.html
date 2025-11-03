@@ -1,69 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TermoSport — Login</title>
-  <link rel="stylesheet" href="login.css" />
-  <script type="module" src="login.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Oss - Derechos Reservados</title>
+    <link rel="stylesheet" href="animacion.css">
 </head>
 <body>
-  <div class="page-bg"></div>
 
-  <main class="center">
-    <div class="card-wrap">
-      <div class="brand">
-        <img src="https://cdn-icons-png.flaticon.com/512/8618/8618881.png" alt="logo" class="logo" />
-        <div class="brand-text">
-          <h1>TermoSport</h1>
-          <p>Sistema de Facturación</p>
+    <div class="animacion-container">
+        <div class="logo">Sistemas<span>Oss</span></div>
+        <p class="slogan">Sistemas - Modernos</p>
+        
+        <div class="loader">
+            <div></div><div></div><div></div><div></div>
         </div>
-      </div>
-
-      <div class="forms" id="forms">
-        <!-- LOGIN -->
-        <form id="loginForm" class="form active">
-          <h2>Iniciar sesión</h2>
-
-          <label for="loginEmail">Correo</label>
-          <input id="loginEmail" type="email" placeholder="tucorreo@dominio.com" required />
-
-          <label for="loginPassword">Contraseña</label>
-          <input id="loginPassword" type="password" placeholder="********" required />
-
-          <!-- tokenGroup aparece solo si hace falta -->
-          <div id="tokenGroup" class="token-group hidden">
-            <label for="loginToken">Token de seguridad</label>
-            <div class="token-row">
-              <input id="loginToken" type="text" placeholder="XXXX-1234" />
-              <button type="button" id="pasteTokenBtn" title="Pegar token" class="mini-btn">Pegar</button>
-            </div>
-            <p class="token-note">Solo se solicita cuando se intenta acceder desde un navegador nuevo.</p>
-          </div>
-
-          <button class="btn primary" id="btnLogin" type="submit">Entrar</button>
-          <p class="muted">¿No tienes cuenta? <a href="#" id="goRegister">Regístrate</a></p>
-        </form>
-
-        <!-- REGISTER -->
-        <form id="registerForm" class="form">
-          <h2>Crear cuenta</h2>
-
-          <label for="registerEmail">Correo</label>
-          <input id="registerEmail" type="email" placeholder="tucorreo@dominio.com" required />
-
-          <label for="registerPassword">Contraseña</label>
-          <input id="registerPassword" type="password" placeholder="Crea una contraseña segura" required />
-
-          <button class="btn primary" id="btnRegister" type="submit">Registrarme</button>
-          <p class="muted">¿Ya tienes cuenta? <a href="#" id="goLogin">Inicia sesión</a></p>
-        </form>
-      </div>
-
-      <footer class="card-footer">
-        <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025</p>
-      </footer>
     </div>
-  </main>
+
+    <script src="animacion.js"></script>
 </body>
 </html>
