@@ -1,0 +1,252 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: #fff;
+  color: #007bff;
+}
+.btn-primary:hover {
+  background: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background: #007bff;
+  color: white;
+}
+.btn-secondary:hover {
+  background: #0056b3;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.content {
+  display: flex;
+  gap: 30px;
+  padding: 40px;
+  flex: 1;
+}
+
+/* ===== COLUMNA IZQUIERDA - CREAR FACTURA ===== */
+.left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Formulario de facturas */
+.form-section {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h2, h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+thead {
+  background: #007bff;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+tr:hover {
+  background: #f9f9f9;
+  transition: background 0.2s ease;
+}
+
+.total-box {
+  text-align: right;
+  margin-top: 15px;
+}
+
+.btn-delete {
+  background: #dc3545;
+  border: none;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-delete:hover {
+  background: #e74c3c;
+}
+
+.empty {
+  text-align: center;
+  color: #666;
+  padding: 15px;
+}
+
+/* ===== COLUMNA DERECHA - FILTROS + FACTURAS ===== */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* filtros lado a lado */
+.filtros-facturas {
+  display: flex;
+  flex-wrap: wrap;       /* permite que baje en pantallas pequeñas */
+  gap: 12px;
+  align-items: flex-end; /* alinea los inputs por la base */
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  backdrop-filter: blur(6px);
+}
+
+.filtros-facturas .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto; /* permite que los dos campos compartan espacio horizontal */
+  min-width: 150px; /* opcional, para no colapsar en pantallas grandes */
+}
+
+.filtros-facturas input[type="text"],
+.filtros-facturas input[type="date"] {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%; /* asegura que ocupen todo el ancho del campo */
+}
+
+
+/* lista de facturas */
+.facturas-lista {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.facturas-lista p {
+  color: #666;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.facturas-lista > div {
+  animation: slideFade 0.35s ease;
+}
+
+@keyframes slideFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* tabla de facturas registradas */
+.table-section {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-top: 10px;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 1200px) {
+  .content {
+    flex-direction: column;
+    padding: 20px;
+  }
+  .filtros-facturas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 600px) {
+  table, th, td {
+    font-size: 13px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
+
+.footer .empresa {
+  font-weight: bold;
+  color: #ffeb3b;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración - TermoSport</title>
+  <link rel="stylesheet" href="configuracion.css" />
+  <script type="module" src="configuracion.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <h1>Configuración del Sistema</h1>
+    <div class="header-buttons">
+      <button id="volverBtn" class="btn-secondary">⬅ Volver</button>
+      <button id="logoutBtn" class="btn-secondary">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="config-container">
+    <!-- DATOS DEL NEGOCIO -->
+    <section class="config-section">
+      <h2>Datos del Negocio</h2>
+      <form id="negocioForm">
+        <label>Nombre del negocio</label>
+        <input type="text" id="nombreNegocio" placeholder="Ej: TermoSport" required />
+
+        <label>Teléfono</label>
+        <input type="text" id="telefonoNegocio" placeholder="Ej: 8091234567" required />
+
+        <label>Dirección</label>
+        <input type="text" id="direccionNegocio" placeholder="Ej: Santo Domingo, R.D." required />
+
+        <button type="submit" class="btn-primary">Guardar cambios</button>
+      </form>
+    </section>
+
+    <!-- SEGURIDAD -->
+    <section class="config-section">
+      <h2>Seguridad</h2>
+      <form id="passwordForm">
+        <label>Nueva contraseña</label>
+        <input type="password" id="nuevaPassword" placeholder="Escribe nueva contraseña" required />
+        <button type="submit" class="btn-primary">Actualizar contraseña</button>
+      </form>
+
+      <div class="token-area">
+        <h3>Token de seguridad</h3>
+        <p>Este token será requerido al iniciar sesión para mayor seguridad.</p>
+        <input type="text" id="tokenInput" readonly />
+        <button id="generarTokenBtn" class="btn-secondary">Generar nuevo token</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSport</span></p>
+  </footer>
+</body>
+</html>

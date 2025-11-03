@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuadre - TermoSport</title>
+  <link rel="stylesheet" href="cuadre.css">
+  <script type="module" src="cuadre.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <!-- ======== ENCABEZADO ======== -->
+  <header class="header">
+    <h1>Cuadre General - TermoSport</h1>
+    <div class="nav-buttons">
+      <button id="backBtn" class="btn-secondary">Volver al Inicio</button>
+      <button id="logoutBtn" class="btn-primary">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <!-- ======== CONTENIDO PRINCIPAL ======== -->
+  <main class="content">
+    <!-- === FORMULARIO DE MOVIMIENTOS === -->
+    <section class="form-section">
+      <h2>Registrar Movimiento</h2>
+      <form id="movimientoForm">
+        <div class="form-group">
+          <label for="tipo">Tipo de movimiento</label>
+          <select id="tipo" required>
+            <option value="">Seleccionar tipo</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <input type="text" id="descripcion" placeholder="Ejemplo: Compra de materiales" required>
+        </div>
+
+        <div class="form-group">
+          <label for="monto">Monto (RD$)</label>
+          <input type="number" id="monto" placeholder="Ej: 1500" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Guardar Movimiento</button>
+        <p id="mensaje" class="mensaje"></p>
+      </form>
+    </section>
+
+    <!-- === SECCIÓN DERECHA === -->
+    <section class="table-section">
+      <h2>Cuadre de Caja</h2>
+
+      <div class="totales">
+        <div class="total-card ingreso">
+          <h3>Ingresos</h3>
+          <p>RD$ <span id="totalIngresos">0.00</span></p>
+        </div>
+
+        <div class="total-card gasto">
+          <h3>Gastos</h3>
+          <p>RD$ <span id="totalGastos">0.00</span></p>
+        </div>
+
+        <div class="total-card venta">
+          <h3>Ventas</h3>
+          <p>RD$ <span id="totalVentas">0.00</span></p>
+        </div>
+
+        <div class="total-card balance">
+          <h3>Balance General</h3>
+          <p>RD$ <span id="balanceGeneral">0.00</span></p>
+        </div>
+      </div>
+
+      <div class="botones-cuadre">
+        <button id="cuadreVentasBtn" class="btn-secondary">Cuadre de Ventas</button>
+        <button id="cuadreIngresosBtn" class="btn-secondary">Cuadre de Ingresos</button>
+        <button id="cuadreGastosBtn" class="btn-secondary">Cuadre de Gastos</button>
+      </div>
+
+      <div id="resultadoCuadre" class="resultado"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="movimientosTable">
+          <tr><td colspan="4" class="empty">Cargando movimientos...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSport</span></p>
+  </footer>
+</body>
+</html>

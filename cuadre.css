@@ -1,0 +1,227 @@
+/* ======== ESTILOS GENERALES ======== */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+.header {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+}
+
+.btn-primary, .btn-secondary {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #007bff;
+  border: 2px solid #007bff;
+}
+
+.btn-secondary:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* ======== CONTENIDO ======== */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+  padding: 40px;
+  flex: 1;
+}
+
+.form-section,
+.table-section {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* ======== FORMULARIO ======== */
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* ======== SECCIÓN DE TOTALES ======== */
+.totales {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.total-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.total-card h3 {
+  margin-bottom: 5px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.total-card p {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.total-card.ingreso p { color: #28a745; }
+.total-card.gasto p { color: #dc3545; }
+.total-card.venta p { color: #17a2b8; }
+.total-card.balance p { color: #007bff; }
+
+/* ======== BOTONES DE CUADRE ======== */
+.botones-cuadre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.resultado {
+  background: #e9f5ff;
+  border: 1px solid #007bff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  color: #0056b3;
+}
+
+/* ======== TABLA ======== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+
+thead {
+  background: #007bff;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+tr:hover {
+  background: #f9f9f9;
+}
+
+.empty {
+  text-align: center;
+  color: #777;
+  padding: 15px;
+}
+
+/* ======== FOOTER ======== */
+.footer {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
+
+.footer .empresa {
+  font-weight: bold;
+  color: #ffeb3b;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 900px) {
+  .content {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .totales {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .total-card p {
+    font-size: 1rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .totales {
+    grid-template-columns: 1fr;
+  }
+}

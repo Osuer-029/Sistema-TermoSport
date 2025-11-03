@@ -1,0 +1,130 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #f3f5f7;
+  color: #333;
+}
+
+.header {
+  background: #0077ff;
+  color: #fff;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.btn-primary {
+  background: #0077ff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #005fd1;
+}
+
+.btn-secondary {
+  background: #e5e5e5;
+}
+
+.btn-secondary:hover {
+  background: #ccc;
+}
+
+.config-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 30px;
+}
+
+.config-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.config-section h2 {
+  margin-bottom: 15px;
+  color: #0077ff;
+  border-bottom: 2px solid #0077ff33;
+  padding-bottom: 5px;
+}
+
+form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+form button {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.token-area {
+  margin-top: 20px;
+  background: #f9fafb;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.token-area input {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.footer {
+  background: #0077ff;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+}
+
+/* ======== FOOTER ======== */
+.footer {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
+
+.footer .empresa {
+  font-weight: bold;
+  color: #ffeb3b;
+}

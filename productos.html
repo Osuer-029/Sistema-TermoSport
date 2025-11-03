@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos - Sistema de Facturación</title>
+  <link rel="stylesheet" href="productos.css" />
+  <script type="module" src="productos.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <h1>Gestión de Productos</h1>
+    <div class="nav-buttons">
+      <a href="inicio.html" class="btn-secondary">⬅ Volver</a>
+      <button id="logoutBtn" class="btn-primary">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- Formulario -->
+    <section class="form-section">
+      <h2 id="form-title">Agregar producto</h2>
+      <form id="productoForm">
+        <input type="hidden" id="productoId" />
+
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" required />
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio ($)</label>
+          <input type="number" id="precio" required />
+        </div>
+
+        <div class="form-group">
+          <label for="costo">Costo ($)</label>
+          <input type="number" id="costo" required />
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input type="number" id="stock" required />
+        </div>
+
+        <div class="form-group">
+          <label for="imagen">Imagen</label>
+          <input type="file" id="imagen" accept="image/*" />
+        </div>
+
+        <button type="submit" class="btn-primary">Guardar</button>
+        <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar edición</button>
+      </form>
+    </section>
+
+    <!-- Listado -->
+    <section class="list-section">
+      <div class="search-bar">
+        <input
+          type="text"
+          id="buscador"
+          placeholder="Buscar producto..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div id="productosGrid" class="productos-grid">
+        <p class="empty">Cargando productos...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSport</span></p>
+  </footer>
+</body>
+</html>
