@@ -39,7 +39,8 @@ const totalFacturaEl = document.getElementById("totalFactura");
 const facturaForm = document.getElementById("facturaForm");
 const facturasTable = document.getElementById("facturasTable");
 
-// === NUEVOS ELEMENTOS DE FILTRO ===
+// === NUEVOS ELEMENTOS ===
+const tipoVentaSelect = document.getElementById("tipoVenta"); // 🔹 Venta normal o por mayor
 const fechaFiltro = document.getElementById("fechaFiltro");
 const buscarFactura = document.getElementById("buscarFactura");
 
@@ -62,11 +63,15 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 // ======== CARGAR CLIENTES ========
+const clientesList = document.getElementById("clientesList");
+
 onSnapshot(collection(db, "clientes"), (snapshot) => {
-  clienteSelect.innerHTML = `<option value="">Seleccionar cliente...</option>`;
+  clientesList.innerHTML = "";
   snapshot.forEach(doc => {
     const c = doc.data();
-    clienteSelect.innerHTML += `<option value="${doc.id}">${c.nombre}</option>`;
+    const option = document.createElement("option");
+    option.value = c.nombre;
+    clientesList.appendChild(option);
   });
 });
 
@@ -85,17 +90,29 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
 agregarProductoBtn.addEventListener("click", () => {
   const idProducto = productoSelect.value;
   const cantidad = parseInt(cantidadInput.value);
+  const tipoVenta = tipoVentaSelect.value; // 🔹 Normal o por mayor
 
   if (!idProducto || cantidad <= 0) return alert("Selecciona un producto y una cantidad válida.");
 
   const producto = productosCache.find(p => p.id === idProducto);
   if (!producto) return;
 
+  // 🔹 Determinar el precio según el tipo de venta
+  const precioUsado = tipoVenta === "mayor" ? parseFloat(producto.porMayor || producto.precio) : parseFloat(producto.precio);
+
   const existente = carrito.find(p => p.id === idProducto);
   if (existente) {
     existente.cantidad += cantidad;
   } else {
-    carrito.push({ id: idProducto, nombre: producto.nombre, precio: producto.precio, cantidad });
+    carrito.push({
+      id: idProducto,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      porMayor: producto.porMayor || 0,
+      costo: producto.costo || 0,
+      precioUsado,
+      cantidad
+    });
   }
 
   renderCarrito();
@@ -107,14 +124,14 @@ function renderCarrito() {
   let total = 0;
 
   carrito.forEach((p, index) => {
-    const subtotal = p.precio * p.cantidad;
+    const subtotal = p.precioUsado * p.cantidad;
     total += subtotal;
 
     tablaProductos.innerHTML += `
       <tr>
         <td>${p.nombre}</td>
         <td>${p.cantidad}</td>
-        <td>$${p.precio.toFixed(2)}</td>
+        <td>$${p.precioUsado.toFixed(2)}</td>
         <td>$${subtotal.toFixed(2)}</td>
         <td><button class="btn-delete" data-index="${index}">X</button></td>
       </tr>
@@ -135,16 +152,19 @@ function renderCarrito() {
 facturaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const clienteId = clienteSelect.value;
-  if (!clienteId) return alert("Selecciona un cliente.");
-  if (carrito.length === 0) return alert("Agrega al menos un producto.");
+  const clienteNombre = clienteSelect.value.trim();
+  const tipoVenta = tipoVentaSelect.value;
 
-  const cliente = clienteSelect.options[clienteSelect.selectedIndex].text;
+  if (!clienteNombre) return alert("Escribe o selecciona un cliente.");
+  if (carrito.length === 0) return alert("Agrega al menos un producto.");
+  if (!tipoVenta) return alert("Selecciona el tipo de venta.");
+
   const total = parseFloat(totalFacturaEl.textContent);
 
   try {
     await addDoc(collection(db, "facturas"), {
-      cliente,
+      cliente: clienteNombre,
+      tipoVenta,
       productos: carrito,
       total,
       fecha: serverTimestamp()
@@ -155,8 +175,10 @@ facturaForm.addEventListener("submit", async (e) => {
     facturaForm.reset();
     totalFacturaEl.textContent = "0.00";
     cargarFacturasFiltradas();
+
   } catch (err) {
     console.error("Error al guardar factura:", err);
+    alert("Error al guardar la factura. Revisa la consola.");
   }
 });
 
@@ -184,7 +206,7 @@ async function cargarFacturasFiltradas() {
   facturasTable.innerHTML = "";
 
   if (snap.empty) {
-    facturasTable.innerHTML = `<tr><td colspan="4" class="empty">No hay facturas registradas en esta fecha</td></tr>`;
+    facturasTable.innerHTML = `<tr><td colspan="5" class="empty">No hay facturas en esta fecha</td></tr>`;
     return;
   }
 
@@ -199,6 +221,7 @@ async function cargarFacturasFiltradas() {
     facturasTable.innerHTML += `
       <tr>
         <td>${f.cliente}</td>
+        <td>${f.tipoVenta || "Normal"}</td>
         <td>${productosHTML}</td>
         <td>$${f.total.toFixed(2)}</td>
         <td>${fecha}</td>
@@ -207,5 +230,5 @@ async function cargarFacturasFiltradas() {
   });
 
   if (facturasTable.innerHTML.trim() === "")
-    facturasTable.innerHTML = `<tr><td colspan="4" class="empty">No hay coincidencias con la búsqueda.</td></tr>`;
+    facturasTable.innerHTML = `<tr><td colspan="5" class="empty">No hay coincidencias.</td></tr>`;
 }

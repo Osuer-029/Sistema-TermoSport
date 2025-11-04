@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cuadre - TermoSport</title>
+  <title>Cuadre - TermoSportRD</title>
   <link rel="stylesheet" href="cuadre.css">
   <script type="module" src="cuadre.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -11,7 +11,7 @@
 <body>
   <!-- ======== ENCABEZADO ======== -->
   <header class="header">
-    <h1>Cuadre General - TermoSport</h1>
+    <h1>Cuadre General - TermoSportRD</h1>
     <div class="nav-buttons">
       <button id="backBtn" class="btn-secondary">Volver al Inicio</button>
       <button id="logoutBtn" class="btn-primary">Cerrar Sesión</button>
@@ -68,9 +68,14 @@
           <p>RD$ <span id="totalVentas">0.00</span></p>
         </div>
 
+        <div class="total-card ganancia">
+          <h3>Ganancias</h3>
+          <p>RD$ <span id="totalGanancias">0.00</span></p>
+        </div>
+
         <div class="total-card balance">
-          <h3>Balance General</h3>
-          <p>RD$ <span id="balanceGeneral">0.00</span></p>
+          <h3>Balance Final</h3>
+          <p>RD$ <span id="balanceFinal">0.00</span></p>
         </div>
       </div>
 
@@ -78,6 +83,7 @@
         <button id="cuadreVentasBtn" class="btn-secondary">Cuadre de Ventas</button>
         <button id="cuadreIngresosBtn" class="btn-secondary">Cuadre de Ingresos</button>
         <button id="cuadreGastosBtn" class="btn-secondary">Cuadre de Gastos</button>
+        <button id="cuadreGananciasBtn" class="btn-secondary">Cuadre de Ganancias</button>
       </div>
 
       <div id="resultadoCuadre" class="resultado"></div>
@@ -99,7 +105,7 @@
   </main>
 
   <footer class="footer">
-    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSport</span></p>
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSportRD</span></p>
   </footer>
 </body>
 </html>

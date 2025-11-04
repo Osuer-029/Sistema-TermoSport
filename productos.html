@@ -17,49 +17,60 @@
   </header>
 
   <main class="content">
-    <!-- Formulario -->
+    <!-- ======== FORMULARIO ======== -->
     <section class="form-section">
       <h2 id="form-title">Agregar producto</h2>
       <form id="productoForm">
         <input type="hidden" id="productoId" />
 
         <div class="form-group">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" required />
+          <label for="nombre">Nombre del producto</label>
+          <input type="text" id="nombre" placeholder="Ejemplo: Camiseta Termo" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="costo">Costo ($)</label>
+            <input type="number" id="costo" min="0" step="0.01" placeholder="Ej: 100" required />
+          </div>
+
+          <div class="form-group">
+            <label for="precio">Precio ($)</label>
+            <input type="number" id="precio" min="0" step="0.01" placeholder="Ej: 250" required />
+          </div>
+
+          <div class="form-group">
+            <label for="porMayor">Precio por Mayor ($)</label>
+            <input type="number" id="porMayor" min="0" step="0.01" placeholder="Ej: 200" required />
+          </div>
         </div>
 
         <div class="form-group">
-          <label for="precio">Precio ($)</label>
-          <input type="number" id="precio" required />
+          <label for="stock">Stock disponible</label>
+          <input type="number" id="stock" min="0" placeholder="Ej: 50" required />
         </div>
 
         <div class="form-group">
-          <label for="costo">Costo ($)</label>
-          <input type="number" id="costo" required />
-        </div>
-
-        <div class="form-group">
-          <label for="stock">Stock</label>
-          <input type="number" id="stock" required />
-        </div>
-
-        <div class="form-group">
-          <label for="imagen">Imagen</label>
+          <label for="imagen">Imagen del producto</label>
           <input type="file" id="imagen" accept="image/*" />
         </div>
 
-        <button type="submit" class="btn-primary">Guardar</button>
-        <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar edición</button>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">💾 Guardar producto</button>
+          <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar edición</button>
+        </div>
       </form>
     </section>
 
-    <!-- Listado -->
+    <!-- ======== LISTADO ======== -->
     <section class="list-section">
+      <h2>Inventario actual</h2>
+
       <div class="search-bar">
         <input
           type="text"
           id="buscador"
-          placeholder="Buscar producto..."
+          placeholder="🔍 Buscar producto..."
           autocomplete="off"
         />
       </div>
@@ -71,7 +82,7 @@
   </main>
 
   <footer class="footer">
-    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSport</span></p>
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 - <span class="empresa">TermoSportRD</span></p>
   </footer>
 </body>
 </html>

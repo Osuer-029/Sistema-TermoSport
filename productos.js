@@ -53,10 +53,11 @@ productoForm.addEventListener("submit", async (e) => {
   const nombre = document.getElementById("nombre").value.trim();
   const precio = parseFloat(document.getElementById("precio").value);
   const costo = parseFloat(document.getElementById("costo").value);
+  const porMayor = parseFloat(document.getElementById("porMayor").value);
   const stock = parseInt(document.getElementById("stock").value);
   const imagenFile = document.getElementById("imagen").files[0];
 
-  if (!nombre || !precio || !costo || !stock) {
+  if (!nombre || isNaN(precio) || isNaN(costo) || isNaN(porMayor) || isNaN(stock)) {
     alert("Completa todos los campos correctamente");
     return;
   }
@@ -74,7 +75,11 @@ productoForm.addEventListener("submit", async (e) => {
       const oldProduct = productosCache.find(p => p.id === id);
 
       await updateDoc(docRef, {
-        nombre, precio, costo, stock,
+        nombre,
+        precio,
+        costo,
+        porMayor,
+        stock,
         imagen: imagenURL || oldProduct.imagen,
       });
 
@@ -84,7 +89,11 @@ productoForm.addEventListener("submit", async (e) => {
       productoForm.reset();
     } else {
       await addDoc(collection(db, "productos"), {
-        nombre, precio, costo, stock,
+        nombre,
+        precio,
+        costo,
+        porMayor,
+        stock,
         imagen: imagenURL || "",
         fecha: serverTimestamp()
       });
@@ -123,9 +132,10 @@ function mostrarProductos(productos) {
     <div class="card">
       <img src="${p.imagen || 'https://cdn-icons-png.flaticon.com/512/679/679922.png'}" alt="${p.nombre}">
       <h3>${p.nombre}</h3>
-      <p><strong>Precio:</strong> $${p.precio.toFixed(2)}</p>
-      <p><strong>Costo:</strong> $${p.costo.toFixed(2)}</p>
-      <p><strong>Stock:</strong> ${p.stock}</p>
+      <p><strong>Precio:</strong> $${p.precio?.toFixed(2) || "0.00"}</p>
+      <p><strong>Por Mayor:</strong> $${p.porMayor?.toFixed(2) || "0.00"}</p>
+      <p><strong>Costo:</strong> $${p.costo?.toFixed(2) || "0.00"}</p>
+      <p><strong>Stock:</strong> ${p.stock || 0}</p>
       <div class="card-actions">
         <button class="btn-edit" data-id="${p.id}">Editar</button>
         <button class="btn-delete" data-id="${p.id}" data-img="${p.imagen || ''}">Eliminar</button>
@@ -150,6 +160,7 @@ function editarProducto(id) {
   document.getElementById("nombre").value = p.nombre;
   document.getElementById("precio").value = p.precio;
   document.getElementById("costo").value = p.costo;
+  document.getElementById("porMayor").value = p.porMayor || 0;
   document.getElementById("stock").value = p.stock;
   productoIdInput.value = p.id;
 
@@ -164,8 +175,12 @@ async function eliminarProducto(id, imgURL) {
     await deleteDoc(doc(db, "productos", id));
 
     if (imgURL) {
-      const imgRef = ref(storage, imgURL);
-      await deleteObject(imgRef).catch(() => {});
+      try {
+        const imgRef = ref(storage, imgURL);
+        await deleteObject(imgRef);
+      } catch (e) {
+        console.warn("No se pudo eliminar la imagen del almacenamiento:", e);
+      }
     }
   } catch (error) {
     console.error("Error al eliminar producto:", error);

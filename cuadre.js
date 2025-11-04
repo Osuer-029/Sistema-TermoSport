@@ -29,18 +29,20 @@ const db = getFirestore(app);
 
 // ======== Elementos del DOM ========
 const logoutBtn = document.getElementById("logoutBtn");
-const backBtn = document.getElementById("backBtn"); // ← agregado
+const backBtn = document.getElementById("backBtn");
 const movimientoForm = document.getElementById("movimientoForm");
 const movimientosTable = document.getElementById("movimientosTable");
 const totalIngresosEl = document.getElementById("totalIngresos");
 const totalGastosEl = document.getElementById("totalGastos");
 const totalVentasEl = document.getElementById("totalVentas");
+const totalGananciasEl = document.getElementById("totalGanancias");
 const balanceGeneralEl = document.getElementById("balanceGeneral");
 const resultadoCuadre = document.getElementById("resultadoCuadre");
 
 const cuadreVentasBtn = document.getElementById("cuadreVentasBtn");
 const cuadreIngresosBtn = document.getElementById("cuadreIngresosBtn");
 const cuadreGastosBtn = document.getElementById("cuadreGastosBtn");
+const cuadreGananciasBtn = document.getElementById("cuadreGananciasBtn");
 
 // ======== Variables globales ========
 let movimientos = [];
@@ -92,7 +94,7 @@ movimientoForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ======== Escuchar movimientos en tiempo real ========
+// ======== Escuchar movimientos ========
 onSnapshot(query(collection(db, "movimientos"), orderBy("fecha", "desc")), (snapshot) => {
   movimientos = [];
   snapshot.forEach((doc) => movimientos.push({ id: doc.id, ...doc.data() }));
@@ -100,7 +102,7 @@ onSnapshot(query(collection(db, "movimientos"), orderBy("fecha", "desc")), (snap
   calcularTotales();
 });
 
-// ======== Escuchar facturas (ventas) ========
+// ======== Escuchar facturas ========
 onSnapshot(query(collection(db, "facturas"), orderBy("fecha", "desc")), (snapshot) => {
   facturas = [];
   snapshot.forEach((doc) => facturas.push({ id: doc.id, ...doc.data() }));
@@ -132,60 +134,97 @@ function renderMovimientos() {
 function calcularTotales() {
   const totalIngresos = movimientos.filter(m => m.tipo === "ingreso").reduce((sum, m) => sum + m.monto, 0);
   const totalGastos = movimientos.filter(m => m.tipo === "gasto").reduce((sum, m) => sum + m.monto, 0);
-  const totalVentas = facturas.reduce((sum, f) => sum + (f.total || 0), 0);
 
-  const balance = (totalIngresos + totalVentas) - totalGastos;
+  // 🔹 Calcular total de ventas (usa precio normal o por mayor según la factura)
+  const totalVentas = facturas.reduce((sum, f) => {
+    if (!f.productos) return sum;
+    return sum + f.productos.reduce((suma, p) => {
+      const precioUsado = parseFloat(p.precioUsado || p.precio || p.porMayor || 0);
+      const cantidad = parseFloat(p.cantidad || 1);
+      return suma + precioUsado * cantidad;
+    }, 0);
+  }, 0);
+
+  // 🔹 Calcular ganancias reales (precio usado - costo)
+  const totalGanancias = facturas.reduce((sum, f) => {
+    if (!f.productos) return sum;
+    return sum + f.productos.reduce((gSum, p) => {
+      const costo = parseFloat(p.costo || 0);
+      const precioUsado = parseFloat(p.precioUsado || p.precio || p.porMayor || 0);
+      const cantidad = parseFloat(p.cantidad || 1);
+      const ganancia = (precioUsado - costo) * cantidad;
+      return gSum + ganancia;
+    }, 0);
+  }, 0);
+
+  const balance = (totalIngresos + totalVentas + totalGanancias) - totalGastos;
 
   totalIngresosEl.textContent = totalIngresos.toFixed(2);
   totalGastosEl.textContent = totalGastos.toFixed(2);
   totalVentasEl.textContent = totalVentas.toFixed(2);
+  totalGananciasEl.textContent = totalGanancias.toFixed(2);
   balanceGeneralEl.textContent = balance.toFixed(2);
 }
 
-// ======== Cuadres por módulo ========
+// ======== Botones de cuadre ========
 cuadreVentasBtn.addEventListener("click", () => {
-  const total = facturas.reduce((sum, f) => sum + (f.total || 0), 0);
-  resultadoCuadre.innerHTML = `
-    <strong>Cuadre de Ventas:</strong> RD$ ${total.toFixed(2)}
-    <br><button class="btn-primary" id="descargarVentasPDF">Descargar PDF</button>
-  `;
-  document.getElementById("descargarVentasPDF").addEventListener("click", () => generarPDF("ventas", total));
+  const total = facturas.reduce((sum, f) => {
+    if (!f.productos) return sum;
+    return sum + f.productos.reduce((suma, p) => {
+      const precioUsado = parseFloat(p.precioUsado || p.precio || p.porMayor || 0);
+      const cantidad = parseFloat(p.cantidad || 1);
+      return suma + precioUsado * cantidad;
+    }, 0);
+  }, 0);
+  mostrarResultado("Cuadre de Ventas", total, "ventas");
 });
 
 cuadreIngresosBtn.addEventListener("click", () => {
   const total = movimientos.filter(m => m.tipo === "ingreso").reduce((sum, m) => sum + m.monto, 0);
-  resultadoCuadre.innerHTML = `
-    <strong>Cuadre de Ingresos:</strong> RD$ ${total.toFixed(2)}
-    <br><button class="btn-primary" id="descargarIngresosPDF">Descargar PDF</button>
-  `;
-  document.getElementById("descargarIngresosPDF").addEventListener("click", () => generarPDF("ingresos", total));
+  mostrarResultado("Cuadre de Ingresos", total, "ingresos");
 });
 
 cuadreGastosBtn.addEventListener("click", () => {
   const total = movimientos.filter(m => m.tipo === "gasto").reduce((sum, m) => sum + m.monto, 0);
-  resultadoCuadre.innerHTML = `
-    <strong>Cuadre de Gastos:</strong> RD$ ${total.toFixed(2)}
-    <br><button class="btn-primary" id="descargarGastosPDF">Descargar PDF</button>
-  `;
-  document.getElementById("descargarGastosPDF").addEventListener("click", () => generarPDF("gastos", total));
+  mostrarResultado("Cuadre de Gastos", total, "gastos");
 });
 
-// ======== Generar PDF tipo Ticket ========
-function generarPDF(tipo, total) {
-  const { jsPDF } = window.jspdf; // ← se usa desde el objeto global
-  const doc = new jsPDF({
-    unit: "mm",
-    format: [80, 200]
+if (cuadreGananciasBtn) {
+  cuadreGananciasBtn.addEventListener("click", () => {
+    const total = facturas.reduce((sum, f) => {
+      if (!f.productos) return sum;
+      return sum + f.productos.reduce((gSum, p) => {
+        const costo = parseFloat(p.costo || 0);
+        const precioUsado = parseFloat(p.precioUsado || p.precio || p.porMayor || 0);
+        const cantidad = parseFloat(p.cantidad || 1);
+        const ganancia = (precioUsado - costo) * cantidad;
+        return gSum + ganancia;
+      }, 0);
+    }, 0);
+    mostrarResultado("Cuadre de Ganancias", total, "ganancias");
   });
+}
+
+// ======== Mostrar resultados de cuadre ========
+function mostrarResultado(titulo, total, tipo) {
+  resultadoCuadre.innerHTML = `
+    <strong>${titulo}:</strong> RD$ ${total.toFixed(2)}
+    <br><button class="btn-primary" id="descargarPDF">Descargar PDF</button>
+  `;
+  document.getElementById("descargarPDF").addEventListener("click", () => generarPDF(tipo, total));
+}
+
+// ======== Generar PDF ========
+function generarPDF(tipo, total) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: [80, 200] });
 
   const fecha = new Date().toLocaleString("es-DO");
-
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
-  doc.text("TermoSport", 40, 10, { align: "center" });
+  doc.text("TermoSportRD", 40, 10, { align: "center" });
   doc.setFontSize(10);
   doc.text("Santo Domingo, R.D.", 40, 15, { align: "center" });
-  doc.text("Tel: 809-000-0000", 40, 19, { align: "center" });
   doc.line(5, 22, 75, 22);
 
   doc.setFontSize(12);
@@ -197,17 +236,27 @@ function generarPDF(tipo, total) {
   let y = 40;
   doc.setFont("helvetica", "normal");
 
-  if (tipo === "ventas") {
+  if (tipo === "ventas" || tipo === "ganancias") {
     facturas.forEach(f => {
-      const line = `${f.cliente || "Cliente"} - RD$${(f.total || 0).toFixed(2)}`;
-      doc.text(line, 5, y);
-      y += 5;
+      if (!f.productos) return;
+      f.productos.forEach(p => {
+        const precioUsado = parseFloat(p.precioUsado || p.precio || p.porMayor || 0);
+        const costo = parseFloat(p.costo || 0);
+        const cantidad = parseFloat(p.cantidad || 1);
+        const ganancia = (precioUsado - costo) * cantidad;
+
+        const linea =
+          tipo === "ganancias"
+            ? `${p.nombre} - RD$${ganancia.toFixed(2)}`
+            : `${p.nombre} - RD$${(precioUsado * cantidad).toFixed(2)}`;
+        doc.text(linea, 5, y);
+        y += 5;
+      });
     });
   } else {
     const lista = movimientos.filter(m => m.tipo === tipo);
     lista.forEach(m => {
-      const line = `${m.descripcion} - RD$${m.monto.toFixed(2)}`;
-      doc.text(line, 5, y);
+      doc.text(`${m.descripcion} - RD$${m.monto.toFixed(2)}`, 5, y);
       y += 5;
     });
   }
@@ -218,7 +267,6 @@ function generarPDF(tipo, total) {
   doc.text(`TOTAL: RD$ ${total.toFixed(2)}`, 40, y, { align: "center" });
   y += 10;
   doc.setFont("helvetica", "italic");
-  doc.text("Gracias por usar TermoSport", 40, y, { align: "center" });
-
+  doc.text("Gracias por usar TermoSportRD", 40, y, { align: "center" });
   doc.save(`cuadre_${tipo}.pdf`);
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Facturación - TermoSport</title>
+  <title>Facturación - TermoSportRD</title>
   <link rel="stylesheet" href="facturacion.css">
   <script type="module" src="facturacion.js" defer></script>
 </head>
@@ -24,9 +24,11 @@
       <h2>🧾 Crear nueva factura</h2>
       <form id="facturaForm">
         <div class="form-group">
-          <label for="clienteSelect">Cliente</label>
-          <select id="clienteSelect" required></select>
-        </div>
+  <label for="clienteSelect">Cliente</label>
+  <input list="clientesList" id="clienteSelect" placeholder="Escribe o selecciona un cliente" required>
+  <datalist id="clientesList"></datalist>
+</div>
+
 
         <div class="form-group">
           <label for="productoSelect">Producto</label>
@@ -37,6 +39,14 @@
           <label for="cantidad">Cantidad</label>
           <input type="number" id="cantidad" min="1" value="1" />
         </div>
+
+        <label for="tipoVenta">Tipo de venta:</label>
+<select id="tipoVenta" required>
+  <option value="">Seleccionar tipo...</option>
+  <option value="normal">Venta normal</option>
+  <option value="mayor">Venta por mayor</option>
+</select>
+
 
         <button type="button" id="agregarProductoBtn" class="btn-primary">Agregar producto</button>
 
@@ -102,7 +112,7 @@
   </main>
 
   <footer class="footer">
-    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 — <span class="empresa">TermoSport</span></p>
+    <p>Desarrollado por <strong>Sistemas-Oss</strong> © 2025 — <span class="empresa">TermoSportRD</span></p>
   </footer>
 </body>
 </html>
