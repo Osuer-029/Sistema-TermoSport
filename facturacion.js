@@ -34,7 +34,8 @@ const clienteSelect = document.getElementById("clienteSelect");
 const productoSelect = document.getElementById("productoSelect");
 const cantidadInput = document.getElementById("cantidad");
 const agregarProductoBtn = document.getElementById("agregarProductoBtn");
-const tablaProductos = document.querySelector("#tablaProductos tbody");
+const tablaProductos = document.getElementById("tablaCarrito");
+
 const totalFacturaEl = document.getElementById("totalFactura");
 const facturaForm = document.getElementById("facturaForm");
 const facturasTable = document.getElementById("facturasTable");
@@ -119,34 +120,77 @@ agregarProductoBtn.addEventListener("click", () => {
 });
 
 // ======== RENDERIZAR CARRITO ========
+// ======== RENDERIZAR CARRITO (ACTUALIZADA) ========
 function renderCarrito() {
-  tablaProductos.innerHTML = "";
-  let total = 0;
+  tablaProductos.innerHTML = "";
+  let total = 0;
 
-  carrito.forEach((p, index) => {
-    const subtotal = p.precioUsado * p.cantidad;
-    total += subtotal;
+  carrito.forEach((p, index) => {
+    // Recalcula el subtotal en caso de que el precioUsado haya sido editado
+    const subtotal = p.precioUsado * p.cantidad;
+    total += subtotal;
 
-    tablaProductos.innerHTML += `
-      <tr>
-        <td>${p.nombre}</td>
-        <td>${p.cantidad}</td>
-        <td>$${p.precioUsado.toFixed(2)}</td>
-        <td>$${subtotal.toFixed(2)}</td>
-        <td><button class="btn-delete" data-index="${index}">X</button></td>
-      </tr>
-    `;
-  });
+    // Creamos la fila y celdas
+    const fila = document.createElement("tr");
 
-  totalFacturaEl.textContent = total.toFixed(2);
+    // Columna de Producto y Cantidad
+    fila.innerHTML = `
+      <td>${p.nombre}</td>
+      <td>${p.cantidad}</td>
+    `;
 
-  document.querySelectorAll(".btn-delete").forEach(btn => {
-    btn.addEventListener("click", () => {
-      carrito.splice(btn.dataset.index, 1);
-      renderCarrito();
-    });
-  });
+    // Columna de Precio (¡EDITABLE!)
+    const celdaPrecio = document.createElement("td");
+    const inputPrecio = document.createElement("input");
+    inputPrecio.type = "number";
+    inputPrecio.min = "0.01";
+    inputPrecio.step = "0.01";
+    // Mostramos el precio actual del carrito (que fue determinado por tipoVenta o por edición anterior)
+    inputPrecio.value = p.precioUsado.toFixed(2);
+    inputPrecio.classList.add('input-precio-editable'); // Para aplicar estilos
+    inputPrecio.dataset.index = index; // Para saber qué producto editar
+    
+    // 🚨 Evento de edición de precio 🚨
+    inputPrecio.addEventListener('change', (e) => {
+      const nuevoPrecio = parseFloat(e.target.value);
+      if (isNaN(nuevoPrecio) || nuevoPrecio <= 0) {
+        alert("El precio debe ser un número positivo.");
+        e.target.value = p.precioUsado.toFixed(2); // Vuelve al valor anterior si es inválido
+        return;
+      }
+      // Actualiza el precio en el carrito y vuelve a renderizar para actualizar subtotales y total
+      carrito[index].precioUsado = nuevoPrecio;
+      renderCarrito(); 
+    });
+    celdaPrecio.appendChild(inputPrecio);
+    fila.appendChild(celdaPrecio);
+
+
+    // Columna de Subtotal y Eliminar
+    const celdaSubtotal = document.createElement("td");
+    celdaSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+    fila.appendChild(celdaSubtotal);
+    
+    const celdaEliminar = document.createElement("td");
+    const btnDelete = document.createElement("button");
+    btnDelete.classList.add("btn-delete");
+    btnDelete.dataset.index = index;
+    btnDelete.textContent = "X";
+    btnDelete.addEventListener("click", () => {
+      carrito.splice(index, 1); // Usamos el índice de la función forEach
+      renderCarrito();
+    });
+    celdaEliminar.appendChild(btnDelete);
+    fila.appendChild(celdaEliminar);
+    
+    tablaProductos.appendChild(fila);
+  });
+
+  totalFacturaEl.textContent = total.toFixed(2);
 }
+
+// Nota: Eliminé el código duplicado de la asignación de evento a ".btn-delete" 
+// que estaba al final de la función original, ahora se hace en cada iteración.
 
 // ======== GUARDAR FACTURA ========
 facturaForm.addEventListener("submit", async (e) => {
@@ -186,14 +230,17 @@ facturaForm.addEventListener("submit", async (e) => {
 fechaFiltro.addEventListener("change", cargarFacturasFiltradas);
 buscarFactura.addEventListener("input", cargarFacturasFiltradas);
 
+import { Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
 async function cargarFacturasFiltradas() {
   const fechaSeleccionada = fechaFiltro.value;
   const textoBuscar = buscarFactura.value.toLowerCase();
 
   if (!fechaSeleccionada) return;
 
-  const inicio = new Date(fechaSeleccionada + "T00:00:00");
-  const fin = new Date(fechaSeleccionada + "T23:59:59");
+  // Convertimos las fechas a Timestamp (🔥 clave)
+  const inicio = Timestamp.fromDate(new Date(fechaSeleccionada + "T00:00:00"));
+  const fin = Timestamp.fromDate(new Date(fechaSeleccionada + "T23:59:59"));
 
   const q = query(
     collection(db, "facturas"),
@@ -213,17 +260,21 @@ async function cargarFacturasFiltradas() {
   snap.forEach((doc) => {
     const f = doc.data();
     const cliente = (f.cliente || "").toLowerCase();
-    const productosHTML = f.productos.map(p => `${p.nombre} (${p.cantidad})`).join(", ");
-    const fecha = f.fecha ? f.fecha.toDate().toLocaleDateString("es-ES") : "-";
+
+    const productosHTML = Array.isArray(f.productos)
+      ? f.productos.map(p => `${p.nombre} (${p.cantidad})`).join(", ")
+      : "Sin productos";
+
+    const fecha = f.fecha && f.fecha.toDate ? f.fecha.toDate().toLocaleDateString("es-ES") : "N/A";
 
     if (textoBuscar && !cliente.includes(textoBuscar) && !productosHTML.toLowerCase().includes(textoBuscar)) return;
 
     facturasTable.innerHTML += `
       <tr>
         <td>${f.cliente}</td>
-        <td>${f.tipoVenta || "Normal"}</td>
+        <td>${f.tipoVenta || "Normal"}</td> 
         <td>${productosHTML}</td>
-        <td>$${f.total.toFixed(2)}</td>
+        <td>$${f.total?.toFixed(2) || "0.00"}</td>
         <td>${fecha}</td>
       </tr>
     `;
@@ -232,3 +283,4 @@ async function cargarFacturasFiltradas() {
   if (facturasTable.innerHTML.trim() === "")
     facturasTable.innerHTML = `<tr><td colspan="5" class="empty">No hay coincidencias.</td></tr>`;
 }
+

@@ -24,11 +24,10 @@
       <h2>🧾 Crear nueva factura</h2>
       <form id="facturaForm">
         <div class="form-group">
-  <label for="clienteSelect">Cliente</label>
-  <input list="clientesList" id="clienteSelect" placeholder="Escribe o selecciona un cliente" required>
-  <datalist id="clientesList"></datalist>
-</div>
-
+          <label for="clienteSelect">Cliente</label>
+          <input list="clientesList" id="clienteSelect" placeholder="Escribe o selecciona un cliente" required>
+          <datalist id="clientesList"></datalist>
+        </div>
 
         <div class="form-group">
           <label for="productoSelect">Producto</label>
@@ -40,13 +39,14 @@
           <input type="number" id="cantidad" min="1" value="1" />
         </div>
 
-        <label for="tipoVenta">Tipo de venta:</label>
-<select id="tipoVenta" required>
-  <option value="">Seleccionar tipo...</option>
-  <option value="normal">Venta normal</option>
-  <option value="mayor">Venta por mayor</option>
-</select>
-
+        <div class="form-group">
+          <label for="tipoVenta">Tipo de venta:</label>
+          <select id="tipoVenta" required>
+            <option value="">Seleccionar tipo...</option>
+            <option value="normal">Venta normal</option>
+            <option value="mayor">Venta por mayor</option>
+          </select>
+        </div>
 
         <button type="button" id="agregarProductoBtn" class="btn-primary">Agregar producto</button>
 
@@ -57,12 +57,15 @@
               <tr>
                 <th>Producto</th>
                 <th>Cantidad</th>
-                <th>Precio</th>
+                <th>Precio Venta</th>
                 <th>Subtotal</th>
                 <th></th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <!-- 🟢 tbody renombrado para evitar conflicto -->
+            <tbody id="tablaCarrito">
+              <tr><td colspan="5" class="empty">Sin productos...</td></tr>
+            </tbody>
           </table>
         </div>
 
@@ -98,13 +101,15 @@
           <thead>
             <tr>
               <th>Cliente</th>
+              <th>Tipo Venta</th>
               <th>Productos</th>
               <th>Total</th>
               <th>Fecha</th>
             </tr>
           </thead>
+          <!-- 🟢 Este tbody es el correcto para las facturas -->
           <tbody id="facturasTable">
-            <tr><td colspan="4" class="empty">Cargando facturas...</td></tr>
+            <tr><td colspan="5" class="empty">Cargando facturas...</td></tr>
           </tbody>
         </table>
       </div>
